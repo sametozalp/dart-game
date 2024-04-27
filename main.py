@@ -3,11 +3,14 @@ import threading
 import time
 from ball import Ball
 from gun import Gun
+import tkinter as tk
+from tkinter import messagebox
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
 ball_timer = 7
+timer = 19
 score = 0
 
 WHITE = (255, 255, 255)
@@ -39,6 +42,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 global ball_timer
+                global timer
                 ball_timer = 0
                 
             # tus bas kontrol
@@ -55,6 +59,8 @@ def main():
                     sound.play()
                     if gun.fire(balls_group):
                         score += 1
+                        if score % 5 == 0:
+                            timer = timer + 1
                         score_balltimer()
                         
 
@@ -87,8 +93,10 @@ def main():
 
         score_text = font.render("Skor: {}".format(score), True, BLACK)
         ball_timer_text = font.render("Topun yerinin değişmesine kalan süre: {}".format(ball_timer), True, BLACK)
+        timer_text = font.render("Kalan zaman: {}".format(timer), True, BLACK)
         screen.blit(score_text, (10, 10))
         screen.blit(ball_timer_text, (10, 40))
+        screen.blit(timer_text, (10, 70))
 
         pygame.display.flip()
         clock.tick(60)
@@ -97,23 +105,39 @@ def main():
 
 def time_counter():
     global ball_timer
-    while(ball_timer >= 0):
-        if ball_timer == 0:
-            score_balltimer()
+    global timer
+    
+    while(ball_timer >= 0 and timer > 0):
         time.sleep(1)
         ball_timer = ball_timer - 1
-        
+        timer = timer - 1
+        if ball_timer < 0:
+            score_balltimer()
+            
+    root = tk.Tk()
+    root.withdraw()  # Ana pencereyi gizle
+
+    show_alert()
+
+    root.mainloop()
+    print("Oyun sonlandırıldı..")
+    
 def score_balltimer():
     global ball_timer        
     if score < 5:
-        ball_timer = 2
+        ball_timer = 7
     elif score < 10:
         ball_timer = 6 
     elif score < 15:
         ball_timer = 5
     elif score < 20:
         ball_timer = 4
+    elif score < 25:
+        ball_timer = 3
 
+def show_alert():
+    messagebox.showinfo("Oyun Bitti", f"Skorunuz: {score}")
+    
 if __name__ == "__main__":
     thread = threading.Thread(target=time_counter)
     thread.start()
