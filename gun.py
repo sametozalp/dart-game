@@ -1,18 +1,20 @@
 import pygame
+import tkinter as tk
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+root = tk.Tk()
+SCREEN_WIDTH = root.winfo_screenwidth()
+SCREEN_HEIGHT = root.winfo_screenheight()
 BLACK = (0, 0, 0)
 
 
 class Gun(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface([20, 20])
-        self.image.fill(BLACK)
+        self.original_image = pygame.image.load("hedef.png")  # Resim dosyasının doğru yolunu gir
+        self.image = pygame.transform.scale(self.original_image, (200, 200))
         self.rect = self.image.get_rect()
         self.rect.x = SCREEN_WIDTH // 2
-        self.rect.y = SCREEN_HEIGHT - 50
+        self.rect.y = SCREEN_HEIGHT - 200
         self.moving_left = False
         self.moving_right = False
         self.moving_up = False
@@ -21,16 +23,16 @@ class Gun(pygame.sprite.Sprite):
     def update(self):
         if self.moving_left:
             if self.rect.x > 0:
-                self.rect.x -= 5
+                self.rect.x -= 15
         elif self.moving_right:
-            if self.rect.x < SCREEN_WIDTH-20:
-                self.rect.x += 5
+            if self.rect.x < SCREEN_WIDTH-200:
+                self.rect.x += 15
         elif self.moving_up:
             if self.rect.y > 0:
-                self.rect.y -= 5
+                self.rect.y -= 15
         elif self.moving_down:
-            if self.rect.y < SCREEN_HEIGHT-20:
-                self.rect.y += 5
+            if self.rect.y < SCREEN_HEIGHT-200:
+                self.rect.y += 15
 
     def move_left(self):
         self.moving_left = True

@@ -6,15 +6,19 @@ from gun import Gun
 import tkinter as tk
 from tkinter import messagebox
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+root = tk.Tk()
+
+SCREEN_WIDTH = root.winfo_screenwidth()
+SCREEN_HEIGHT = root.winfo_screenheight()
 
 ball_timer = 7
-timer = 19
+timer = 23
 score = 0
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+
+running = True
 
 pygame.mixer.init()
 sound = pygame.mixer.Sound("gun.mp3")
@@ -22,6 +26,7 @@ sound = pygame.mixer.Sound("gun.mp3")
 def main():
     pygame.init()
     global score
+    global running
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Dart Game")
 
@@ -35,7 +40,6 @@ def main():
 
     font = pygame.font.Font(None, 36)
 
-    running = True
     while running:
         for event in pygame.event.get(): # olayları al
             
@@ -59,8 +63,8 @@ def main():
                     sound.play()
                     if gun.fire(balls_group):
                         score += 1
-                        if score % 5 == 0:
-                            timer = timer + 1
+                        if score % 3 == 0:
+                            timer = timer + 3
                         score_balltimer()
                         
 
@@ -100,12 +104,19 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
+    
+    root.destroy()
+
+    show_alert()
+
+    print("Oyun sonlandırıldı..")
 
     pygame.quit()
 
 def time_counter():
     global ball_timer
     global timer
+    global running
     
     while(ball_timer >= 0 and timer > 0):
         time.sleep(1)
@@ -113,14 +124,9 @@ def time_counter():
         timer = timer - 1
         if ball_timer < 0:
             score_balltimer()
-            
-    root = tk.Tk()
-    root.withdraw()  # Ana pencereyi gizle
-
-    show_alert()
-
-    root.mainloop()
-    print("Oyun sonlandırıldı..")
+    
+    running = False
+    
     
 def score_balltimer():
     global ball_timer        
